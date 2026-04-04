@@ -6,7 +6,9 @@ import { FaBars, FaSignOutAlt, FaTimes, FaUser } from "react-icons/fa";
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(  
+    () => !!localStorage.getItem("authToken")
+);
   //   () => !!localStorage.getItem("authToken")
   //   console.log(localStorage.getItem("authToken"));
   const location = useLocation();
