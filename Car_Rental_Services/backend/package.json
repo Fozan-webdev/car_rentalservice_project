@@ -1,0 +1,19 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Car Rental services",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fozan-webdev/car_rentalservice_project.git"
+  },
+  "author": "gcb",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Fozan-webdev/car_rentalservice_project/issues"
+  },
+  "homepage": "https://github.com/Fozan-webdev/car_rentalservice_project#readme"
+}
