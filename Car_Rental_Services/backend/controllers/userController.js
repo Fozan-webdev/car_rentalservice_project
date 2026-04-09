@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 // TOKEN
 const TOKEN_EXPIRES_IN = "24h";
-const JWT_SECRET = "your_jwt_secret_here";
+const JWT_SECRET = "GCBTech";
 
 const createToken = (userId) => {
   const secret = JWT_SECRET;
@@ -88,20 +88,51 @@ export async function register(req, res) {
 // LOGIN FUNCTION
 
 export async function login(req, res) {
-    try {
-        const emailRaw = String(req.body.email || "").trim();
-        const email = validator.normalizeEmail(emailRaw) || emailRaw.toLowerCase();
-        const password = String(req.body.password || "");
+  try {
+    const emailRaw = String(req.body.email || "").trim();
+    const email = validator.normalizeEmail(emailRaw) || emailRaw.toLowerCase();
+    const password = String(req.body.password || "");
 
-        if ( !email || !password) {
-            return res.status(400).json({
-                success: false,
-                message: 'All fields are required.'
-            });
-        }
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'All fields are required.'
+      });
     }
-
-    catch (error) {
-
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password'
+      })
     }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password'
+      })
+    }
+    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '24h' });
+    return res.status(200).json({
+      success: true,
+      message: 'Login Successfull',
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email
+      }
+    });
+
+
+  }
+
+catch (err) {
+    console.error('Login error', err);
+    return res.status(500).json({
+        success: false,
+        message: 'Server Error'
+    })
+}
 }
