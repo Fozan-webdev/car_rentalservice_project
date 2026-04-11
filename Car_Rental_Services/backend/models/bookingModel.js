@@ -149,7 +149,7 @@ bookingSchema.post("save", async function (doc, next) {
       ).exec();
       await Car.findByIdAndUpdate(
         carId,
-        { $pull: { bookings: bookingEntry } },
+        { $push: { bookings: bookingEntry } },
         { new: true },
       ).exec();
     } else {
