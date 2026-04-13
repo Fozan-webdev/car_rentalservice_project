@@ -5,9 +5,10 @@ import logo from "../assets/carlogo.svg";
 import { CalendarCheck, Car, PlusCircle, Menu, X } from "lucide-react";
 
 const navLinks = [
-  { path: "/calendar", label: "Calendar", icon: CalendarCheck },
-  { path: "/cars", label: "Cars", icon: Car },
-  { path: "/add", label: "Add New", icon: PlusCircle },
+   { path: "/", label: "Add Car", icon: PlusCircle },
+  { path: "/manage-cars", label: "Manage Cars",icon: Car  },
+  { path: "/bookings", label: "Bookings", icon: CalendarCheck },
+ 
 ];
 
 const Navbar = () => {

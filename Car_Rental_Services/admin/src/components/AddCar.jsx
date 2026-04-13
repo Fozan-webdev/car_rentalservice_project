@@ -1,6 +1,7 @@
 import React, { useCallback, useRef, useState } from "react";
 import { AddCarPageStyles, toastStyles } from "../assets/dummyStyles";
 import axios from "axios";
+import {toast, ToastContainer } from "react-toastify";
 
 const baseURL = "http://localhost:5000";
 const api = axios.create({ baseURL });
@@ -361,7 +362,6 @@ const AddCar = () => {
                 } else if (field.type === "select") {
                   return renderSelectField(field.config);
                 }
-
                 return null;
               })}
               <div>
@@ -386,21 +386,113 @@ const AddCar = () => {
                     </label>
                   ))}
                 </div>
-                <div className={AddCarPageStyles.formColumn}>
-                  <div className={AddCarPageStyles.formGridInner}>
-                    {rightColumnFields.map((field) => {
-                      if (field.type === "input") {
-                        return renderInputField(field.config);
-                      }
-                      return null;
-                    })}
-                  </div>
+              </div>
+            </div>
+            <div className={AddCarPageStyles.formColumn}>
+              <div className={AddCarPageStyles.formGridInner}>
+                {rightColumnFields.map((field) => {
+                  if (field.type === "input") {
+                    return renderInputField(field.config);
+                  }
+                  return null;
+                })}
+              </div>
+              <div>
+                <label className={AddCarPageStyles.label}>Car Image</label>
+                <div className={AddCarPageStyles.imageUploadContainer}>
+                  <label className={AddCarPageStyles.imageUploadLabel}>
+                    {data.imagePreview ? (
+                      <div className="w-full h-full rounded-xl overflow-hidden">
+                        <img
+                          src={data.imagePreview}
+                          alt="Preview"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className={AddCarPageStyles.imageUploadPlaceholder}>
+                        <svg
+                          className={AddCarPageStyles.iconUpload}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          ></path>
+                        </svg>
+                        <p className={AddCarPageStyles.imageUploadText}>
+                          <span
+                            className={AddCarPageStyles.imageUploadTextSemibold}
+                          >
+                            Click to upload
+                          </span>
+                          <br />
+                          or drag and drop
+                        </p>
+                        <p className={AddCarPageStyles.imageUploadSubText}>
+                          PNG, JPG upto 5mb
+                        </p>
+                      </div>
+                    )}
+                    <input
+                      type="file"
+                      ref={fileRef}
+                      name="image"
+                      onChange={handleImageChange}
+                      className="hidden"
+                      accept="image/*"
+                    />
+                  </label>
                 </div>
+              </div>
+              <div>
+                <label className={AddCarPageStyles.label}>Description</label>
+                <textarea
+                  required
+                  name="description"
+                  value={data.description}
+                  onChange={handleChange}
+                  rows="4"
+                  className={AddCarPageStyles.textarea}
+                  placeholder="Describe features, condition, special detalis..."
+                />
               </div>
             </div>
           </div>
+          <div className="mt-12 flex justify-center">
+            <button type="submit" className={AddCarPageStyles.submitButton}>
+              <span className={AddCarPageStyles.buttonText}>List Your Car</span>
+              <svg
+                className={AddCarPageStyles.iconInline}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                ></path>
+              </svg>
+            </button>
+          </div>
         </form>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        closeOnClick
+        pauseOnHover
+        draggable
+        pauseOnFocusLoss
+        theme="dark"
+      />
     </div>
   );
 };
