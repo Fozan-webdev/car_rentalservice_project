@@ -7,13 +7,22 @@ import ContactPage from "./pages/ContactPage";
 import CarPage from "./pages/CarPage";
 import CarDetailPage from "./pages/CarDetailPage";
 import { FaArrowUp } from "react-icons/fa";
+import Booking from "../../admin/src/components/Booking";
+import VerifyPaymentPage from "./pages/VerifyPaymentPage";
 // PROTECTED ROUTE
 const ProtectedRoute = ({ children }) => {
   const location = useLocation();
-  const authToken = localStorage.getItem("authToken");
+  const authToken = localStorage.getItem("token");
 
   if (!authToken) {
     return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  }
+  return children;
+};
+const RedirectIfAuthenticated = ({ children }) => {
+  const authToken = localStorage.getItem("token");
+  if (authToken) {
+    return <Navigate to="/" replace />;
   }
   return children;
 };
@@ -38,8 +47,7 @@ const App = () => {
     <>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
+
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/cars" element={<CarPage />} />
         <Route
@@ -50,6 +58,34 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/bookings"
+          element={
+            <ProtectedRoute>
+              <Booking />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <RedirectIfAuthenticated>
+              <Login />
+            </RedirectIfAuthenticated>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <RedirectIfAuthenticated>
+              <SignUp />
+            </RedirectIfAuthenticated>
+          }
+        />
+        <Route path="/success" element={<VerifyPaymentPage />} />
+        <Route path="/cancel" element={<VerifyPaymentPage />} />
+
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       {showButton && (
         <button

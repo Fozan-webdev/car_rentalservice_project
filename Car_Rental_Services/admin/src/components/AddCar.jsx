@@ -43,6 +43,7 @@ const AddCar = () => {
     };
     reader.readAsDataURL(file);
   }, []);
+  // console.log("Preview value:", data.imagePreview);
   const resetForm = useCallback(() => {
     setData(initialFormData);
     if (fileRef.current) fileRef.current.value = "";
@@ -235,13 +236,13 @@ const AddCar = () => {
       type: "input",
       config: {
         name: "dailyPrice",
-        label: "Daily Price ($)",
+        label: "Daily Price (pkr)",
         type: "number",
         required: true,
         min: "1",
-        placeholder: "45",
+        placeholder: " : 45",
         props: { className: "pl-8" },
-        prefix: <span className="absolute left-3 top-3 text-gray-400">$</span>,
+        prefix: <span className="absolute left-3 top-3 text-gray-400">pkr</span>,
       },
     },
     {

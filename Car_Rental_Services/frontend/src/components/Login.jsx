@@ -3,7 +3,8 @@ import { loginStyles, loginStyles as styles } from "../assets/dummyStyles";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaEye, FaEyeSlash, FaLock, FaUser } from "react-icons/fa";
 import logo from "../assets/carlogo.svg";
-import {toast, ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from "react-toastify";
+import axios from "axios";
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -11,6 +12,7 @@ const Login = () => {
   const [credentials, setCredentails] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [isActive, setIsActive] = useState(false);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     setIsActive(true);
   }, []);
@@ -21,26 +23,62 @@ const Login = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login details", credentials);
-    localStorage.setItem("authToken", "your-authentication-token-here");
-    toast.success("Login Successful! Welcome back", {
-      position: "top-right",
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      theme: "colored",
-      onClose: () => {
-        const redirectPath =  "/";
-        navigate(redirectPath, { replace: true });
-      },
-    });
+    setLoading(true);
+    try {
+      // console.log("Login details", credentials);
+      // localStorage.setItem("authToken", "your-authentication-token-here");
+      const base = "http://localhost:5000";
+      const url = `${base}/api/auth/login`;
+      const res = await axios.post(url, credentials, {
+        headers: { "Content-Type": "application/json" },
+      });
+      if (res.status >= 200 && res.status < 300) {
+        const { token, user, message } = res.data || {};
+
+        if (token) localStorage.setItem("token", token);
+        if (user) localStorage.setItem("user", JSON.stringify(user));
+        toast.success(message || "Login Successful! Welcome back", {
+          position: "top-right",
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "colored",
+          onClose: () => {
+            const redirectPath = "/";
+            navigate(redirectPath, { replace: true });
+          },
+          autoClose: 1000,
+        });
+      } else {
+        toast.error("Unexpected response from server", {
+          theme: "colored",
+        });
+      }
+    } catch (err) {
+      console.error("Login error (frontend):", err);
+      if (err.response) {
+        const serverMessage =
+          err.response.data?.message ||
+          err.response.data?.error ||
+          `Server error: ${err.response.status}`;
+        toast.error(serverMessage, { theme: "colored" });
+      } else if (err.request) {
+        toast.error("No response from server — is backend running?", {
+          theme: "colored",
+        });
+      } else {
+        toast.error(err.message || "Login failed", { theme: "colored" });
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Password Toggle Logic
-  const togglePasswordVisibilty = () => setShowPassword(prev => !prev);
+  const togglePasswordVisibilty = () => setShowPassword((prev) => !prev);
   return (
     <div className={loginStyles.pageContainer}>
       {/* ANIMATED BACKGROUND */}
@@ -129,18 +167,20 @@ const Login = () => {
                 </div>
               </div>
             </div>
-            <button type="submit" className={styles.form.submitButton}>
-              <span className={styles.form.buttonText}>Login</span>
+            <button type="submit" disabled={loading} className={styles.form.submitButton}>
+              <span className={styles.form.buttonText}>{loading ? "Logging in..." : "Login"}</span>
               <div className={styles.form.buttonHover} />
             </button>
           </form>
           <div className={styles.signupSection}>
             <p className={styles.signupText}>Don't have an account?</p>
-            <a href="/signup" className={styles.signupButton}>CREATE ACCOUNT</a>
+            <a href="/signup" className={styles.signupButton}>
+              CREATE ACCOUNT
+            </a>
           </div>
         </div>
       </div>
-        <ToastContainer
+      <ToastContainer
         position="top-right"
         autoClose={1000}
         hideProgressBar={false}
@@ -152,9 +192,9 @@ const Login = () => {
         pauseOnHover
         theme="colored"
         toastStyle={{
-          backgroundColor: '#fb923c',
-          borderRadius: '12px',
-          boxShadow: '0 4px 20px rgba(249, 115, 22, 0.25)'
+          backgroundColor: "#fb923c",
+          borderRadius: "12px",
+          boxShadow: "0 4px 20px rgba(249, 115, 22, 0.25)",
         }}
       />
     </div>

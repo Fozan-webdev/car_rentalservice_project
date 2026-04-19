@@ -17,7 +17,7 @@ export const createCar = async (req, res, next) => {
 
         let imageFilename = req.body.image || '';
         if (req.file) {
-            imageFilename = req.file.imageFilename
+            imageFilename = req.file.filename;
         }
         // SAVING TO DB
         const car = new Car({

@@ -12,7 +12,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/carlogo.svg";
 import { toast, ToastContainer } from "react-toastify";
-
+import axios from "axios";
 function SignUp() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -24,6 +24,7 @@ function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [isActive, setIsActive] = useState(false);
+  cont[(loading, setLoading)] = useState(false);
   useEffect(() => {
     setIsActive(true);
   }, []);
@@ -36,21 +37,74 @@ function SignUp() {
       [name]: value,
     }));
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!acceptedTerms) {
       toast.error("Please accept terms & conditions", { theme: "dark" });
     }
+    setLoading(true);
 
-    toast.success("Account created successfully! Welcome to PremiumDrive", {
-      position: "top-right",
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      theme: "dark",
-      onClose: () => navigate("/login"),
-    });
+    try {
+      const base = "http://localhost:5000";
+      const url = `${base}/api/auth/register`;
+      const res = await axios.post(url, formData, {
+        headers: { "Content-Type": "application/json" },
+      });
+      if (res.status >= 200 && res.status < 300) {
+        const { token, user } = res.data || {};
+
+        if (token) localStorage.setItem("token", token);
+        if (user) localStorage.setItem("user", JSON.stringify(user));
+
+        toast.success("Account created successfully! Welcome to GCB DRIVE", {
+          position: "top-right",
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "dark",
+          autoClose: 1200,
+          onClose: () => navigate("/login"),
+        });
+
+        setLoading(false);
+        return;
+      }
+      toast.error("Unexpected server response during registration.", {
+        theme: "dark",
+      });
+    } catch (err) {
+      // Detailed axios error handling
+      console.error("Signup error (frontend):", err);
+      if (err.response) {
+        // Server responded with a status outside 2xx
+        console.log(
+          "Server response (debug):",
+          err.response.status,
+          err.response.data,
+        );
+        const serverMessage =
+          err.response.data?.message ||
+          err.response.data?.error ||
+          `Server error: ${err.response.status}`;
+        toast.error(serverMessage, { theme: "dark" });
+      } else if (err.request) {
+        // Request made but no response
+        console.log("No response received (debug):", err.request);
+        toast.error(
+          "No response from server — ensure backend is running and CORS is configured.",
+          {
+            theme: "dark",
+          },
+        );
+      } else {
+        // Something else happened
+        toast.error(err.message || "Registration failed", { theme: "dark" });
+      }
+    }
+    finally {
+      setLoading(false);
+    }
   };
   // Password Toggle Logic
   const togglePasswordVisibilty = () => setShowPassword(!showPassword);
@@ -215,11 +269,12 @@ function SignUp() {
                 boxShadow: "0 5px 15px rgba(8,90,20,0.6)",
               }}
               type="submit"
+              disabled={loading}
               className={signupStyles.form.submitButton}
             >
               <span className={signupStyles.form.buttonText}>
                 <FaCheck className=" text-white text-sm sm:text-base md:text-lg" />
-                CREATE ACCOUNT
+                {loading?"Creating...":"CREATE ACCOUNT"}
               </span>
               <div className={signupStyles.form.buttonHover} />
             </button>
