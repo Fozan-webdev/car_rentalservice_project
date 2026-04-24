@@ -7,8 +7,8 @@ import ContactPage from "./pages/ContactPage";
 import CarPage from "./pages/CarPage";
 import CarDetailPage from "./pages/CarDetailPage";
 import { FaArrowUp } from "react-icons/fa";
-import Booking from "../../admin/src/components/Booking";
 import VerifyPaymentPage from "./pages/VerifyPaymentPage";
+import MyBooking from "./pages/MyBooking";
 // PROTECTED ROUTE
 const ProtectedRoute = ({ children }) => {
   const location = useLocation();
@@ -62,7 +62,7 @@ const App = () => {
           path="/bookings"
           element={
             <ProtectedRoute>
-              <Booking />
+              <MyBooking/>
             </ProtectedRoute>
           }
         />

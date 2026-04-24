@@ -87,6 +87,7 @@ bookingSchema.pre("validate", async function (next) {
     next();
   } catch (err) {
     next(err);
+    // throw err;
   }
 });
 const blockingStatuses = ["pending", "active", "upcoming"];

@@ -29,7 +29,7 @@ const api = axios.create({
 });
 
 const todayISO = () => new Date().toISOString().split("T")[0];
-
+//Convert to first time zone 
 const buildImageSrc = (image) => {
   if (!image) return `${API_BASE}/uploads/default-car.png`;
   if (Array.isArray(image)) image = image[0];
@@ -41,7 +41,7 @@ const buildImageSrc = (image) => {
   if (t.startsWith("/")) return `${API_BASE}${t}`;
   return `${API_BASE}/uploads/${t}`;
 };
-
+//build image and store in local storage to avoid broken images on next load
 const handleImageError = (
   e,
   fallback = `${API_BASE}/uploads/default-car.png`
@@ -64,7 +64,7 @@ const calculateDays = (from, to) => {
     (new Date(to) - new Date(from)) / (1000 * 60 * 60 * 24)
   );
   return Math.max(1, days);
-};
+};//number of days calculation with minimum of 1 day
 
 const CarDetail = () => {
   const { id } = useParams();
@@ -141,7 +141,6 @@ const CarDetail = () => {
       } catch {}
       fetchControllerRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   if (!car && loadingCar)
@@ -149,7 +148,7 @@ const CarDetail = () => {
   if (!car && carError)
     return <div className="p-6 text-red-400">{carError}</div>;
   if (!car) return <div className="p-6 text-white">Car not found.</div>;
-
+//get car by id as a particular car to book or to fetch 
   const carImages = [
     ...(Array.isArray(car.images) ? car.images : []),
     ...(car.image ? (Array.isArray(car.image) ? car.image : [car.image]) : []),
@@ -268,7 +267,7 @@ const CarDetail = () => {
   const transmissionLabel = car.transmission
     ? String(car.transmission).toLowerCase()
     : "standard";
-
+//here is the UI part 
   return (
     <div className={carDetailStyles.pageContainer}>
       <div className={carDetailStyles.contentContainer}>
@@ -653,7 +652,7 @@ const CarDetail = () => {
                     </div>
                   </div>
                 </div>
-
+                //Price calculation and display based on selected dates and car price
                 <div className={carDetailStyles.priceBreakdown}>
                   <div className={carDetailStyles.priceRow}>
                     <span>Rate/day</span>

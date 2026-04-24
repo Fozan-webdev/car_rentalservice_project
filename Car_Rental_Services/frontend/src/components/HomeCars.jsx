@@ -13,6 +13,7 @@ const startOfDay = (d) => {
 };
 const daysBetween = (from, to) =>
   Math.ceil((startOfDay(to) - startOfDay(from)) / MS_PER_DAY);
+  //get the number of days here
 
 const HomeCars = () => {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ const HomeCars = () => {
         abortRef.current?.abort();
       } catch {}
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, []);
 
   const fetchCars = async () => {
@@ -72,7 +73,7 @@ const HomeCars = () => {
       setLoading(false);
     }
   };
-
+//fetch the cars from server and return to ui 
   const buildImageSrc = (image) => {
     if (!image) return "";
     if (Array.isArray(image)) image = image[0];
@@ -96,7 +97,7 @@ const HomeCars = () => {
     img.alt = img.alt || "Image not available";
     img.style.objectFit = img.style.objectFit || "cover";
   };
-
+//get the image source for the car and handle error if image is broken or not available
   const formatDate = (dateStr) => {
     if (!dateStr) return "—";
     try {
@@ -167,7 +168,7 @@ const HomeCars = () => {
 
     return { state: "fully_available", source: "none" };
   };
-
+//get the booked cars when they are availble  
   const computeAvailableMeta = (untilIso) => {
     if (!untilIso) return null;
     try {
@@ -274,12 +275,12 @@ const HomeCars = () => {
     if (!effective) return false;
     return effective.state === "booked";
   };
-
+//
   const handleBook = (car) => {
     if (isBookDisabled(car)) return;
     navigate(`/cars/${car._id || car.id}`, { state: { car } });
   };
-
+//it is the part of UI
   return (
     <div className={styles.container}>
       <div className={styles.headerContainer}>

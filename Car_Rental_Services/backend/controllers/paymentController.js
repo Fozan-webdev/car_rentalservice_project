@@ -208,7 +208,7 @@ export const confirmPayment = async (req, res) => {
             currency: session.currency || null,
           },
         },
-        { new: true },
+        { new:true },
       );
     }
     if (!order) {
@@ -223,7 +223,7 @@ export const confirmPayment = async (req, res) => {
             currency: session.currency || null,
           },
         },
-        { new: true },
+        { new:true },
       );
     }
     if (!order) return res.status(404).json({
